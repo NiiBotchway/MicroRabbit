@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace MicroRabbit.Banking.Data.Domain
+namespace MicroRabbit.Domain.Core.ContextFactory
 {
     public class GenericDesignTimeDbContextFactory<T> : IDesignTimeDbContextFactory<T> where T : DbContext
     {
