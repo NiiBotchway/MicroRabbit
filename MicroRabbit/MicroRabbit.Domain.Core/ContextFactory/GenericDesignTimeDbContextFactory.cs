@@ -10,6 +10,13 @@ namespace MicroRabbit.Domain.Core.ContextFactory
 {
     public class GenericDesignTimeDbContextFactory<T> : IDesignTimeDbContextFactory<T> where T : DbContext
     {
+        private readonly string _connectionStringKey;
+
+        public GenericDesignTimeDbContextFactory(string connectionStringKey)
+        {
+            _connectionStringKey = connectionStringKey;
+        }
+
         public T CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -18,7 +25,8 @@ namespace MicroRabbit.Domain.Core.ContextFactory
                 .Build();
 
             var builder = new DbContextOptionsBuilder<T>();
-            var connectionString = configuration.GetConnectionString("BankingDbConnection");
+            //var connectionString = configuration.GetConnectionString("BankingDbConnection");
+            var connectionString = configuration.GetConnectionString(_connectionStringKey);
 
             builder.UseSqlServer(connectionString);
 

@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Infra.IoC;
+using MicroRabbit.Transfer.Data.Context;
+using MicroRabbit.Transfer.Domain.EventHandlers;
+using MicroRabbit.Transfer.Domain.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,7 +35,7 @@ namespace MicroRabbit.Transfer.Api
         {
             services.AddDbContext<TransferDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("BankingDbConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("TransferDbConnection"));
             }
             );
 
@@ -44,7 +48,10 @@ namespace MicroRabbit.Transfer.Api
 
             RegisterServices(services);
 
-            services.AddControllers();
+            //services.AddMemoryCache();
+
+            //services.AddControllers();
+            services.AddMvc();
         }
 
         private void RegisterServices(IServiceCollection services)
@@ -62,7 +69,7 @@ namespace MicroRabbit.Transfer.Api
 
             app.UseSwagger();
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transger Microservice v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transfer Microservice v1");
             });
 
             app.UseHttpsRedirection();
@@ -75,6 +82,14 @@ namespace MicroRabbit.Transfer.Api
             {
                 endpoints.MapControllers();
             });
+
+            ConfigureEventBus(app);
+        }
+
+        private void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<TransferCreatedEvent, TransferEventHandler>();
         }
     }
 }

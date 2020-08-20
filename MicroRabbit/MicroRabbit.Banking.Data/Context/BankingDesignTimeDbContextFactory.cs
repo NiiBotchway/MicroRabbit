@@ -8,5 +8,8 @@ namespace MicroRabbit.Banking.Data.Domain
 {
     public class BankingDesignTimeDbContextFactory : GenericDesignTimeDbContextFactory<BankingDbContext>
     {
+        public BankingDesignTimeDbContextFactory() : base("BankingDbConnection")
+        {
+        }
     }
 }
